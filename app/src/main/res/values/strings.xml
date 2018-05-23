@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BroomlingTech</string>
+    <string-array name="places">
+        <item>Hospital</item>
+        <item>School</item>
+        <item>Doctor</item>
+    </string-array>
+</resources>
