@@ -7,12 +7,17 @@
     tools:context=".ReviewList">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/addReview"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="TextView" />
+        android:clickable="true"
+        android:gravity="center"
+        android:text="Add Review"
+        android:textAllCaps="true"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
