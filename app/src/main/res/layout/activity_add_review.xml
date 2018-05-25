@@ -1,9 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddReviewActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:gravity="right"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:text="TextView" />
+
+    <EditText
+        android:id="@+id/review"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="Review(optional)"
+        android:inputType="textMultiLine" />
+
+    <RatingBar
+        android:id="@+id/ratingBar2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/review"
+        android:layout_margin="12dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/Submit"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:background="@color/colorPrimaryDark"
+        android:text="Submit" />
+
+    <TextView
+        android:id="@+id/errorMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ratingBar2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-12dp"
+        android:textSize="16sp"
+        android:alpha="0"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="Must fill the rating" />
+
+</RelativeLayout>

@@ -5,12 +5,13 @@ import com.example.vatsal.broomlingtech.models.Example;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface placeList {
-    @GET("location={latitude},{longitude}&radius=15000&type={type}&keyword={key}&key=" + MainActivity.api_key)
-    Call<Example> getList(@Path("latitude") double latitude,
-                          @Path("longitude") double longitude,
-                          @Path("type") String type,
-                          @Path("key") String key);
+    @GET("maps/api/place/nearbysearch/json")
+    Call<Example> getList(@Query("location") String location,
+                          @Query("type") String type,
+                          @Query("radius") int value,
+                          @Query("keyword") String key,
+                          @Query("key") String api);
 }

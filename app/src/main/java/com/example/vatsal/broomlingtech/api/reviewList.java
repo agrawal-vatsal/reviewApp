@@ -9,6 +9,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface reviewList {
-    @GET("{id}")
+    @GET("review/{id}")
     Call<List<ReviewAPIModel>> getList(@Path("id") String id);
 }

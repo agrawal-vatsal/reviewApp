@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
 import com.example.vatsal.broomlingtech.api.reviewList;
 import com.example.vatsal.broomlingtech.models.Review;
@@ -23,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ReviewList extends AppCompatActivity {
     RecyclerView recyclerView;
     Retrofit retrofit;
-    public static final String BASE_URL = "";
+    public static final String BASE_URL = "https://vatsal-api.herokuapp.com/";
     TextView addReview;
 
     @Override
@@ -58,11 +60,30 @@ public class ReviewList extends AppCompatActivity {
             }
         };
         list.getList(getIntent().getExtras().getString("id")).enqueue(callback);
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//            Toolbar toolbar = (Toolbar) getActionBarView();
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setTitle(getIntent().getExtras().getString("name"));
+//        }
         addReview = (TextView) findViewById(R.id.addReview);
         addReview.setOnClickListener((View v) -> {
             Intent intent = new Intent(ReviewList.this, AddReviewActivity.class);
-            intent.putExtra("id", getIntent().getExtras().getString("id"));
+            intent.putExtra("id",
+                    getIntent()
+                            .getExtras()
+                            .getString("id"));
+            intent.putExtra("name",
+                    getIntent()
+                            .getExtras()
+                            .getString("name"));
             startActivity(intent);
         });
+    }
+
+    public View getActionBarView() {
+        Window window = getWindow();
+        View v = window.getDecorView();
+        int resId = getResources().getIdentifier("action_bar_container", "id", "android");
+        return v.findViewById(resId);
     }
 }

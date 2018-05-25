@@ -1,6 +1,7 @@
 package com.example.vatsal.broomlingtech;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -39,26 +40,27 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     public static final String api_key = "AIzaSyDVqkduN9kA0LZrCUinHYy0GFs-LupVELk";
-    public static final String BASE_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
+    public static final String BASE_URL = "https://maps.googleapis.com/";
     AutoCompleteTextView autoCompleteTextView;
     Spinner spinner;
     LocationManager locationManager;
     Location loc;
     public static final String TAG = "TAG";
     Retrofit retrofit;
+    LocationListener locationListener;
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (ContextCompat.checkSelfPermission(
-                getApplicationContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        } else
-            Toast.makeText(getApplicationContext(),
-                    "Couldn't get location permission", Toast.LENGTH_LONG);
-    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (ContextCompat.checkSelfPermission(
+//                getApplicationContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//        } else
+//            Toast.makeText(getApplicationContext(),
+//                    "Couldn't get location permission", Toast.LENGTH_LONG);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +68,38 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // getting current location
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     1);
-        loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                loc = location;
+            }
 
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        if (loc != null)
+            Toast.makeText(this, "location is not null", Toast.LENGTH_LONG).show();
+        loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         spinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.places, android.R.layout.simple_spinner_item);
@@ -97,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             .baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();
+                    Log.d(TAG, "onTextChanged: retrofit created");
                     placeList list = retrofit.create(placeList.class);
                     Callback<Example> callback = new Callback<Example>() {
                         @Override
@@ -107,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                                 final ArrayList<String> arrayList = new ArrayList<>();
                                 for (Result result : response.body().getResults())
                                     arrayList.add(result.getName());
-
+                                Log.d(TAG, "onResponse: Arraylist created");
                                 final ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this,
                                         android.R.layout.simple_list_item_1,
                                         arrayList);
@@ -116,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                                 autoCompleteTextView.setThreshold(3);
                                 autoCompleteTextView.setTextColor(Color.BLACK);
                                 autoCompleteTextView.showDropDown();
-
+                                Log.d(TAG, "onResponse: All task done for the autocompletetextview");
                                 autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -126,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
                                                 .getResults()
                                                 .get(position)
                                                 .getId());
+                                        intent.putExtra("name", response
+                                                .body()
+                                                .getResults()
+                                                .get(position)
+                                                .getName());
                                         getApplicationContext().startActivity(intent);
                                     }
                                 });
@@ -137,7 +168,15 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "onFailure: can't fetch api data");
                         }
                     };
-                    list.getList(loc.getLatitude(), loc.getLongitude(), spinner.getSelectedItem().toString(), input).enqueue(callback);
+                    list.getList(String.format("%f,%f", 28.613910, 77.081478),
+                            spinner
+                                    .getSelectedItem()
+                                    .toString()
+                                    .toLowerCase(),
+                            150000,
+                            input,
+                            api_key)
+                            .enqueue(callback);
                 }
             }
 
